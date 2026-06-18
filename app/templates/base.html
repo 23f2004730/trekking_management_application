@@ -3,18 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Trekking Management App{% endblock %}</title>
-    <!-- Bootstrap 5 CDN -->
+    <title>{% block title %}TrekManager{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    {% block content %}
-    <!-- Page content goes here — will be built in Milestone 2 onwards -->
-    {% endblock %}
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<nav class="navbar navbar-expand-lg navbar-trek">
+  <div class="container">
+    <a class="navbar-brand text-white" href="{{ url_for('auth.index') }}">
+      🏔️ TrekManager
+    </a>
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#mainNav"
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNav">
+
+      <!-- Left nav links (role-specific) -->
+      <ul class="navbar-nav me-auto">
+        {% if current_user.is_authenticated %}
+
+          {% if current_user.role == 'admin' %}
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}"
+                 href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'admin.treks' %}active{% endif %}"
+                 href="{{ url_for('admin.treks') }}">Treks</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'admin.users' %}active{% endif %}"
+                 href="{{ url_for('admin.users') }}">Users</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'admin.staff_list' %}active{% endif %}"
+                 href="{{ url_for('admin.staff_list') }}">Staff</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'admin.bookings' %}active{% endif %}"
+                 href="{{ url_for('admin.bookings') }}">Bookings</a>
+            </li>
+
+          {% elif current_user.role == 'staff' %}
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'staff.dashboard' %}active{% endif %}"
+                 href="{{ url_for('staff.dashboard') }}">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'staff.my_treks' %}active{% endif %}"
+                 href="{{ url_for('staff.my_treks') }}">My Treks</a>
+            </li>
+
+          {% else %} {# trekker #}
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'user.dashboard' %}active{% endif %}"
+                 href="{{ url_for('user.dashboard') }}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'user.bookings' %}active{% endif %}"
+                 href="{{ url_for('user.bookings') }}">My Bookings</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.endpoint == 'user.history' %}active{% endif %}"
+                 href="{{ url_for('user.history') }}">History</a>
+            </li>
+          {% endif %}
+
+        {% endif %}
+      </ul>
+
+      <!-- Right nav (user info + logout / login + register) -->
+      <ul class="navbar-nav align-items-center">
+        {% if current_user.is_authenticated %}
+          <li class="nav-item me-2">
+            <span class="role-badge role-badge-{{ current_user.role }}">
+              {{ current_user.role }}
+            </span>
+          </li>
+          <li class="nav-item me-3">
+            <span class="nav-link py-0 text-white-50">
+              {{ current_user.full_name }}
+            </span>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-outline-light btn-sm"
+               href="{{ url_for('auth.logout') }}">Logout</a>
+          </li>
+        {% else %}
+          <li class="nav-item me-2">
+            <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-light btn-sm text-dark fw-semibold"
+               href="{{ url_for('auth.register') }}">Register</a>
+          </li>
+        {% endif %}
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="container mt-3">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer mt-4">
+  <div class="container text-center">
+    <small class="text-muted">
+      🏔️ TrekManager &mdash; Trekking Management Application &nbsp;|&nbsp; MAD-I Project
+    </small>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>

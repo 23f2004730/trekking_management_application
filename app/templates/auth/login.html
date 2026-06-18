@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="card shadow-sm">
+
+      <!-- Card header -->
+      <div class="card-header bg-trek-dark text-white text-center py-4"
+           style="background-color: var(--trek-dark); border-radius: 12px 12px 0 0;">
+        <div class="auth-logo mb-2">🏔️</div>
+        <h4 class="mb-0 text-white">Welcome to TrekManager</h4>
+        <small class="text-white-50">Sign in to continue</small>
+      </div>
+
+      <!-- Card body: login form -->
+      <div class="card-body p-4">
+        <form method="POST" action="{{ url_for('auth.login') }}">
+
+          <!-- Username -->
+          <div class="mb-3">
+            <label for="username" class="form-label fw-semibold">Username</label>
+            <input type="text" class="form-control" id="username" name="username"
+                   placeholder="Enter your username" required autofocus>
+          </div>
+
+          <!-- Password -->
+          <div class="mb-4">
+            <label for="password" class="form-label fw-semibold">Password</label>
+            <input type="password" class="form-control" id="password" name="password"
+                   placeholder="Enter your password" required>
+          </div>
+
+          <!-- Submit -->
+          <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-trek btn-lg fw-semibold">
+              Sign In
+            </button>
+          </div>
+
+        </form>
+
+        <!-- Divider -->
+        <hr class="my-3">
+
+        <!-- Links -->
+        <p class="text-center mb-0 text-muted small">
+          Don't have an account?
+          <a href="{{ url_for('auth.register') }}" class="fw-semibold text-decoration-none">
+            Register here
+          </a>
+        </p>
+      </div>
+
+      <!-- Card footer: role hint -->
+      <div class="card-footer bg-light text-center py-2">
+        <small class="text-muted">
+          Admin · Trek Staff · Trekker — same login page for all roles
+        </small>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

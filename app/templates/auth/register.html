@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card-wide">
+    <div class="card shadow-sm">
+
+      <!-- Header -->
+      <div class="card-header text-white text-center py-4"
+           style="background-color: var(--trek-dark); border-radius: 12px 12px 0 0;">
+        <div class="auth-logo mb-2">🧗</div>
+        <h4 class="mb-0 text-white">Create Your Account</h4>
+        <small class="text-white-50">Join as a Trekker or Trek Staff</small>
+      </div>
+
+      <div class="card-body p-4">
+        <form method="POST" action="{{ url_for('auth.register') }}">
+
+          <!-- ── Role selection ──────────────────────────────────────── -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">I am registering as</label>
+            <div class="d-flex gap-4">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="role"
+                       id="role_trekker" value="trekker"
+                       {% if form_data.get('role', 'trekker') == 'trekker' %}checked{% endif %}
+                       required>
+                <label class="form-check-label fw-semibold" for="role_trekker">
+                  🥾 Trekker
+                </label>
+                <div class="text-muted small">Browse and book treks</div>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="role"
+                       id="role_staff" value="staff"
+                       {% if form_data.get('role') == 'staff' %}checked{% endif %}>
+                <label class="form-check-label fw-semibold" for="role_staff">
+                  🗺️ Trek Staff
+                </label>
+                <div class="text-muted small">Guide and manage treks</div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-3">
+
+          <!-- ── Basic information ──────────────────────────────────── -->
+          <h6 class="fw-bold text-uppercase text-muted mb-3" style="font-size:0.8rem; letter-spacing:0.6px;">
+            Account Information
+          </h6>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="username" class="form-label fw-semibold">
+                Username <span class="text-danger">*</span>
+              </label>
+              <input type="text" class="form-control" id="username" name="username"
+                     value="{{ form_data.get('username', '') }}"
+                     minlength="3" required placeholder="e.g. john_doe">
+            </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label fw-semibold">
+                Email <span class="text-danger">*</span>
+              </label>
+              <input type="email" class="form-control" id="email" name="email"
+                     value="{{ form_data.get('email', '') }}"
+                     required placeholder="your@email.com">
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="full_name" class="form-label fw-semibold">
+                Full Name <span class="text-danger">*</span>
+              </label>
+              <input type="text" class="form-control" id="full_name" name="full_name"
+                     value="{{ form_data.get('full_name', '') }}"
+                     required placeholder="Your full name">
+            </div>
+            <div class="col-md-6">
+              <label for="phone" class="form-label fw-semibold">
+                Phone <span class="text-muted small">(optional)</span>
+              </label>
+              <input type="tel" class="form-control" id="phone" name="phone"
+                     value="{{ form_data.get('phone', '') }}"
+                     placeholder="10-digit mobile number">
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label for="password" class="form-label fw-semibold">
+                Password <span class="text-danger">*</span>
+              </label>
+              <input type="password" class="form-control" id="password" name="password"
+                     minlength="6" required placeholder="Min. 6 characters">
+            </div>
+            <div class="col-md-6">
+              <label for="confirm_password" class="form-label fw-semibold">
+                Confirm Password <span class="text-danger">*</span>
+              </label>
+              <input type="password" class="form-control" id="confirm_password"
+                     name="confirm_password" minlength="6" required
+                     placeholder="Repeat your password">
+            </div>
+          </div>
+
+          <!-- ── Trek Staff section ──────────────────────────────────── -->
+          <div class="staff-section">
+            <div class="staff-section-title">
+              🗺️ Trek Staff Details
+              <span class="text-muted fw-normal text-lowercase ms-1">(fill this only if registering as Trek Staff)</span>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="specialization" class="form-label fw-semibold">Specialization</label>
+                <select class="form-select" id="specialization" name="specialization">
+                  <option value="">Select specialization</option>
+                  <option value="High Altitude"
+                    {% if form_data.get('specialization') == 'High Altitude' %}selected{% endif %}>
+                    High Altitude
+                  </option>
+                  <option value="Forest"
+                    {% if form_data.get('specialization') == 'Forest' %}selected{% endif %}>
+                    Forest
+                  </option>
+                  <option value="Desert"
+                    {% if form_data.get('specialization') == 'Desert' %}selected{% endif %}>
+                    Desert
+                  </option>
+                  <option value="Coastal"
+                    {% if form_data.get('specialization') == 'Coastal' %}selected{% endif %}>
+                    Coastal
+                  </option>
+                  <option value="Snow & Ice"
+                    {% if form_data.get('specialization') == 'Snow & Ice' %}selected{% endif %}>
+                    Snow & Ice
+                  </option>
+                  <option value="General"
+                    {% if form_data.get('specialization') == 'General' %}selected{% endif %}>
+                    General
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label for="experience_years" class="form-label fw-semibold">Years of Experience</label>
+                <input type="number" class="form-control" id="experience_years"
+                       name="experience_years" min="0" max="50"
+                       value="{{ form_data.get('experience_years', '0') }}"
+                       placeholder="0">
+              </div>
+              <div class="col-md-3">
+                <label for="emergency_contact" class="form-label fw-semibold">Emergency Contact</label>
+                <input type="tel" class="form-control" id="emergency_contact"
+                       name="emergency_contact"
+                       value="{{ form_data.get('emergency_contact', '') }}"
+                       placeholder="Phone number">
+              </div>
+            </div>
+
+            <div class="mb-1">
+              <label for="bio" class="form-label fw-semibold">Bio / Experience Summary</label>
+              <textarea class="form-control" id="bio" name="bio" rows="2"
+                        placeholder="Brief description of your trekking expertise...">{{ form_data.get('bio', '') }}</textarea>
+            </div>
+          </div>
+
+          <!-- ── Submit ──────────────────────────────────────────────── -->
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-trek btn-lg fw-semibold">
+              Create Account
+            </button>
+          </div>
+
+        </form>
+
+        <hr class="my-3">
+        <p class="text-center mb-0 text-muted small">
+          Already have an account?
+          <a href="{{ url_for('auth.login') }}" class="fw-semibold text-decoration-none">Sign in here</a>
+        </p>
+      </div>
+
+      <div class="card-footer bg-light py-2 text-center">
+        <small class="text-muted">
+          Trek Staff registrations require admin approval before dashboard access.
+        </small>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,5 +1,183 @@
+/* =============================================================================
+   style.css — TrekManager Custom Styles
+   Bootstrap 5 handles the base; this file adds the trek theme on top.
+   ============================================================================= */
 
-body {
-    background-color: #f8f9fa;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
+:root {
+    --trek-dark   : #1a3d2b;   /* deep forest green — navbar */
+    --trek-medium : #2d6a4f;   /* mid green */
+    --trek-light  : #52b788;   /* light green — focus rings */
+    --trek-accent : #f4a261;   /* warm amber — highlights */
 }
+
+/* ── Layout ─────────────────────────────────────────────────────────────────── */
+body {
+    background-color : #f4f6f4;
+    min-height       : 100vh;
+    display          : flex;
+    flex-direction   : column;
+}
+main  { flex: 1; }
+
+/* ── Navbar ─────────────────────────────────────────────────────────────────── */
+.navbar-trek {
+    background-color : var(--trek-dark);
+    box-shadow       : 0 2px 8px rgba(0,0,0,0.25);
+}
+.navbar-trek .navbar-brand {
+    font-size   : 1.25rem;
+    font-weight : 700;
+    letter-spacing: 0.3px;
+}
+.navbar-trek .nav-link          { color: rgba(255,255,255,0.82) !important; }
+.navbar-trek .nav-link:hover,
+.navbar-trek .nav-link.active   { color: #fff !important; }
+.navbar-trek .nav-link.active   { font-weight: 600; }
+
+/* ── Role badge in navbar ───────────────────────────────────────────────────── */
+.role-badge {
+    font-size     : 0.68rem;
+    font-weight   : 600;
+    padding       : 3px 9px;
+    border-radius : 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+.role-badge-admin   { background: #f4a261; color: #000; }
+.role-badge-staff   { background: #0dcaf0; color: #000; }
+.role-badge-trekker { background: #52b788; color: #fff; }
+
+/* ── Cards ──────────────────────────────────────────────────────────────────── */
+.card {
+    border        : none;
+    border-radius : 12px;
+    box-shadow    : 0 2px 10px rgba(0,0,0,0.07);
+}
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+    font-weight  : 600;
+}
+
+/* ── Auth pages ─────────────────────────────────────────────────────────────── */
+.auth-wrapper {
+    min-height : calc(100vh - 130px);
+    display    : flex;
+    align-items: center;
+    justify-content: center;
+    padding    : 2rem 1rem;
+}
+.auth-card       { width: 100%; max-width: 460px; }
+.auth-card-wide  { width: 100%; max-width: 640px; }
+
+.auth-logo {
+    font-size  : 2.8rem;
+    line-height: 1;
+}
+
+/* ── Form focus ─────────────────────────────────────────────────────────────── */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--trek-light);
+    box-shadow  : 0 0 0 0.2rem rgba(82,183,136,0.25);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────────── */
+.btn-trek {
+    background-color: var(--trek-dark);
+    border-color    : var(--trek-dark);
+    color           : #fff;
+}
+.btn-trek:hover {
+    background-color: var(--trek-medium);
+    border-color    : var(--trek-medium);
+    color           : #fff;
+}
+
+/* ── Dashboard stat cards ───────────────────────────────────────────────────── */
+.stat-card {
+    border-left : 4px solid;
+    border-radius: 10px;
+    transition  : transform 0.15s;
+}
+.stat-card:hover        { transform: translateY(-2px); }
+.stat-card-treks        { border-left-color: #0d6efd; }
+.stat-card-users        { border-left-color: #198754; }
+.stat-card-staff        { border-left-color: #ffc107; }
+.stat-card-bookings     { border-left-color: #dc3545; }
+.stat-card-open         { border-left-color: #52b788; }
+.stat-card-pending      { border-left-color: #fd7e14; }
+
+.stat-number {
+    font-size  : 2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+.stat-label {
+    font-size : 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+}
+
+/* ── Status badges ──────────────────────────────────────────────────────────── */
+.badge-pending     { background-color: #ffc107 !important; color: #000 !important; }
+.badge-approved    { background-color: #198754 !important; color: #fff !important; }
+.badge-blacklisted { background-color: #dc3545 !important; color: #fff !important; }
+.badge-open        { background-color: #198754 !important; color: #fff !important; }
+.badge-closed      { background-color: #6c757d !important; color: #fff !important; }
+.badge-completed   { background-color: #0dcaf0 !important; color: #000 !important; }
+.badge-cancelled   { background-color: #dc3545 !important; color: #fff !important; }
+.badge-booked      { background-color: #0d6efd !important; color: #fff !important; }
+.badge-easy        { background-color: #198754 !important; color: #fff !important; }
+.badge-moderate    { background-color: #ffc107 !important; color: #000 !important; }
+.badge-hard        { background-color: #dc3545 !important; color: #fff !important; }
+
+/* ── Tables ─────────────────────────────────────────────────────────────────── */
+.table th {
+    background-color: #f1f3f5;
+    font-size       : 0.8rem;
+    font-weight     : 600;
+    text-transform  : uppercase;
+    letter-spacing  : 0.5px;
+    color           : #495057;
+}
+
+/* ── Section header ─────────────────────────────────────────────────────────── */
+.section-header {
+    display        : flex;
+    justify-content: space-between;
+    align-items    : center;
+    margin-bottom  : 1.25rem;
+    padding-bottom : 0.5rem;
+    border-bottom  : 2px solid #e9ecef;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────────── */
+.footer {
+    background-color: #fff;
+    border-top      : 1px solid #dee2e6;
+    padding         : 0.9rem 0;
+    margin-top      : auto;
+}
+
+/* ── Staff details box in register ─────────────────────────────────────────── */
+.staff-section {
+    background-color: #f0faf4;
+    border          : 1px solid #b7e4c7;
+    border-radius   : 10px;
+    padding         : 1.25rem;
+    margin-top      : 1rem;
+}
+.staff-section-title {
+    font-size  : 0.85rem;
+    font-weight: 600;
+    color      : var(--trek-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 0.75rem;
+}
+
+/* ── Pending page ───────────────────────────────────────────────────────────── */
+.pending-icon { font-size: 4rem; }
