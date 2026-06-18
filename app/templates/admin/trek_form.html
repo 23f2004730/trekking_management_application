@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit Trek' if action == 'edit' else 'Add New Trek' }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="section-header">
+    <div>
+      <h3 class="fw-bold mb-1">
+        {{ '✏️ Edit Trek' if action == 'edit' else '➕ Add New Trek' }}
+      </h3>
+      <p class="text-muted mb-0">
+        {% if action == 'edit' %}Editing: {{ trek.name }}
+        {% else %}Fill in the details to create a new trekking event{% endif %}
+      </p>
+    </div>
+    <a href="{{ url_for('admin.treks') }}" class="btn btn-outline-secondary">← Back to Treks</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-4">
+      <form method="POST"
+            action="{{ url_for('admin.trek_edit', trek_id=trek.id) if action == 'edit'
+                               else url_for('admin.trek_add') }}">
+
+        <!-- Basic Info -->
+        <h6 class="form-section-title">Basic Information</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Trek Name <span class="text-danger">*</span></label>
+            <input type="text" name="name" class="form-control" required
+                   placeholder="e.g. Kedarnath Trek"
+                   value="{{ form_data.get('name', trek.name if trek else '') }}">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Location <span class="text-danger">*</span></label>
+            <input type="text" name="location" class="form-control" required
+                   placeholder="e.g. Uttarakhand"
+                   value="{{ form_data.get('location', trek.location if trek else '') }}">
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Difficulty <span class="text-danger">*</span></label>
+            <select name="difficulty" class="form-select" required>
+              <option value="">Select…</option>
+              {% for d in ['Easy','Moderate','Hard'] %}
+              {% set cur = form_data.get('difficulty', trek.difficulty if trek else '') %}
+              <option value="{{ d }}" {% if cur == d %}selected{% endif %}>{{ d }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Duration (days) <span class="text-danger">*</span></label>
+            <input type="number" name="duration" class="form-control" min="1" required
+                   value="{{ form_data.get('duration', trek.duration if trek else '') }}">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Price (₹)</label>
+            <input type="number" name="price" class="form-control" min="0" step="0.01"
+                   value="{{ form_data.get('price', trek.price if trek else '0') }}">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Status</label>
+            <select name="status" class="form-select">
+              {% for s in ['Pending','Approved','Open','Closed','Completed'] %}
+              {% set cur = form_data.get('status', trek.status if trek else 'Pending') %}
+              <option value="{{ s }}" {% if cur == s %}selected{% endif %}>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <!-- Slots -->
+        <h6 class="form-section-title mt-4">Slots</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Total Slots <span class="text-danger">*</span></label>
+            <input type="number" name="total_slots" class="form-control" min="1" required
+                   value="{{ form_data.get('total_slots', trek.total_slots if trek else '') }}">
+          </div>
+          {% if action == 'edit' %}
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Available Slots</label>
+            <input type="number" name="available_slots" class="form-control" min="0"
+                   value="{{ form_data.get('available_slots', trek.available_slots if trek else '') }}">
+            <div class="form-text">Adjust when editing — reflects cancellations etc.</div>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Dates -->
+        <h6 class="form-section-title mt-4">Dates</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Start Date <span class="text-danger">*</span></label>
+            <input type="date" name="start_date" class="form-control" required
+                   value="{{ form_data.get('start_date',
+                             trek.start_date.strftime('%Y-%m-%d') if trek else '') }}">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">End Date <span class="text-danger">*</span></label>
+            <input type="date" name="end_date" class="form-control" required
+                   value="{{ form_data.get('end_date',
+                             trek.end_date.strftime('%Y-%m-%d') if trek else '') }}">
+          </div>
+        </div>
+
+        <!-- Staff Assignment -->
+        <h6 class="form-section-title mt-4">Staff Assignment</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Assigned Trek Staff</label>
+            <select name="assigned_staff_id" class="form-select">
+              <option value="">— None / Unassigned —</option>
+              {% for s in approved_staff %}
+              {% set cur_id = form_data.get('assigned_staff_id')|int
+                              if form_data.get('assigned_staff_id')
+                              else (trek.assigned_staff_id if trek else None) %}
+              <option value="{{ s.id }}" {% if cur_id == s.id %}selected{% endif %}>
+                {{ s.full_name }} ({{ s.staff_profile.specialization or 'General' }})
+              </option>
+              {% endfor %}
+            </select>
+            {% if not approved_staff %}
+            <div class="form-text text-warning">No approved staff yet. Approve staff first.</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Description -->
+        <h6 class="form-section-title mt-4">Description</h6>
+        <div class="mb-4">
+          <textarea name="description" class="form-control" rows="3"
+                    placeholder="Describe the trek route, highlights, what to expect…">{{ form_data.get('description', trek.description if trek else '') }}</textarea>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-trek px-4 fw-semibold">
+            {{ '💾 Save Changes' if action == 'edit' else '✅ Create Trek' }}
+          </button>
+          <a href="{{ url_for('admin.treks') }}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

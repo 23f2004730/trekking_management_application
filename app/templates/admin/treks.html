@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Manage Treks{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="section-header">
+    <div>
+      <h3 class="fw-bold mb-1">Manage Treks</h3>
+      <p class="text-muted mb-0">{{ treks | length }} trek(s) found</p>
+    </div>
+    <a href="{{ url_for('admin.trek_add') }}" class="btn btn-trek">+ Add New Trek</a>
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="card mb-4">
+    <div class="card-body py-3">
+      <form method="GET" action="{{ url_for('admin.treks') }}" class="row g-2 align-items-end">
+        <div class="col-md-5">
+          <input type="search" name="q" class="form-control"
+                 placeholder="Search by name, location, or ID…"
+                 value="{{ q }}">
+        </div>
+        <div class="col-md-2">
+          <select name="difficulty" class="form-select">
+            <option value="">All Difficulties</option>
+            {% for d in ['Easy','Moderate','Hard'] %}
+            <option value="{{ d }}" {% if diff_filter == d %}selected{% endif %}>{{ d }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select name="status" class="form-select">
+            <option value="">All Statuses</option>
+            {% for s in ['Pending','Approved','Open','Closed','Completed'] %}
+            <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-trek w-100">Search</button>
+        </div>
+        <div class="col-md-1">
+          <a href="{{ url_for('admin.treks') }}" class="btn btn-outline-secondary w-100">Clear</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Trek Table -->
+  {% if treks %}
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Trek Name</th>
+            <th>Location</th>
+            <th>Difficulty</th>
+            <th>Status</th>
+            <th>Slots</th>
+            <th>Dates</th>
+            <th>Assigned Staff</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for trek in treks %}
+          <tr>
+            <td class="text-muted small">{{ trek.id }}</td>
+            <td>
+              <div class="fw-semibold">{{ trek.name }}</div>
+              {% if trek.price > 0 %}
+              <small class="text-muted">₹{{ "%.0f"|format(trek.price) }}</small>
+              {% endif %}
+            </td>
+            <td>{{ trek.location }}</td>
+            <td>
+              <span class="badge badge-{{ trek.difficulty | lower }}">{{ trek.difficulty }}</span>
+            </td>
+            <td>
+              <span class="badge badge-{{ trek.status | lower }}">{{ trek.status }}</span>
+            </td>
+            <td>
+              <span class="{% if trek.available_slots == 0 %}text-danger{% endif %}">
+                {{ trek.available_slots }}/{{ trek.total_slots }}
+              </span>
+            </td>
+            <td class="small text-muted">
+              {{ trek.start_date.strftime('%d %b %Y') }}
+            </td>
+            <td>
+              {% if trek.assigned_staff %}
+                <span class="text-success small fw-semibold">{{ trek.assigned_staff.full_name }}</span>
+              {% else %}
+                <!-- Quick-assign dropdown -->
+                <form method="POST"
+                      action="{{ url_for('admin.trek_assign', trek_id=trek.id) }}"
+                      class="d-flex gap-1">
+                  <select name="staff_id" class="form-select form-select-sm"
+                          style="min-width:110px">
+                    <option value="">— assign —</option>
+                    {% for s in approved_staff %}
+                    <option value="{{ s.id }}">{{ s.full_name }}</option>
+                    {% endfor %}
+                  </select>
+                  <button type="submit" class="btn btn-sm btn-outline-success">✓</button>
+                </form>
+              {% endif %}
+            </td>
+            <td>
+              <div class="d-flex gap-1">
+                <a href="{{ url_for('admin.trek_edit', trek_id=trek.id) }}"
+                   class="btn btn-sm btn-outline-primary">Edit</a>
+                <form method="POST"
+                      action="{{ url_for('admin.trek_delete', trek_id=trek.id) }}">
+                  <button type="submit" class="btn btn-sm btn-outline-danger"
+                    onclick="return confirm('Delete {{ trek.name }}? This cannot be undone.')">
+                    Delete
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="alert alert-info">
+    No treks found{% if q %} matching "{{ q }}"{% endif %}.
+    <a href="{{ url_for('admin.trek_add') }}">Add a trek?</a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

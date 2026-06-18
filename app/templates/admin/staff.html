@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Manage Trek Staff{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="section-header">
+    <div>
+      <h3 class="fw-bold mb-1">Manage Trek Staff</h3>
+      <p class="text-muted mb-0">{{ staff | length }} staff member(s) found</p>
+    </div>
+  </div>
+
+  <!-- Search & Filter -->
+  <div class="card mb-4">
+    <div class="card-body py-3">
+      <form method="GET" action="{{ url_for('admin.staff_list') }}" class="row g-2 align-items-end">
+        <div class="col-md-5">
+          <input type="search" name="q" class="form-control"
+                 placeholder="Search by username, full name, or ID…"
+                 value="{{ q }}">
+        </div>
+        <div class="col-md-2">
+          <select name="status" class="form-select">
+            <option value="">All Statuses</option>
+            {% for s in ['Pending','Approved','Blacklisted'] %}
+            <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-trek w-100">Search</button>
+        </div>
+        <div class="col-md-2">
+          <a href="{{ url_for('admin.staff_list') }}" class="btn btn-outline-secondary w-100">Clear</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Quick filter tabs -->
+  <div class="d-flex gap-2 mb-3">
+    <a href="{{ url_for('admin.staff_list') }}"
+       class="btn btn-sm {% if not status_filter %}btn-trek{% else %}btn-outline-secondary{% endif %}">
+      All
+    </a>
+    <a href="{{ url_for('admin.staff_list') }}?status=Pending"
+       class="btn btn-sm {% if status_filter == 'Pending' %}btn-warning text-dark{% else %}btn-outline-warning{% endif %}">
+      ⏳ Pending
+    </a>
+    <a href="{{ url_for('admin.staff_list') }}?status=Approved"
+       class="btn btn-sm {% if status_filter == 'Approved' %}btn-success{% else %}btn-outline-success{% endif %}">
+      ✅ Approved
+    </a>
+    <a href="{{ url_for('admin.staff_list') }}?status=Blacklisted"
+       class="btn btn-sm {% if status_filter == 'Blacklisted' %}btn-danger{% else %}btn-outline-danger{% endif %}">
+      🚫 Blacklisted
+    </a>
+  </div>
+
+  <!-- Staff Table -->
+  {% if staff %}
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Full Name</th>
+            <th>Specialization</th>
+            <th>Experience</th>
+            <th>Status</th>
+            <th>Assigned Treks</th>
+            <th>Approved By</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in staff %}
+          {% set sp = s.staff_profile %}
+          <tr class="{% if s.is_blacklisted %}table-danger{% elif sp and sp.status == 'Pending' %}table-warning{% endif %}">
+            <td class="text-muted small">{{ s.id }}</td>
+            <td class="fw-semibold">{{ s.username }}</td>
+            <td>{{ s.full_name }}</td>
+            <td>
+              {% if sp and sp.specialization %}
+                <span class="badge bg-info text-dark">{{ sp.specialization }}</span>
+              {% else %}
+                <span class="text-muted">—</span>
+              {% endif %}
+            </td>
+            <td class="text-center">
+              {{ sp.experience_years if sp else '—' }}
+              {% if sp and sp.experience_years %}<small class="text-muted"> yrs</small>{% endif %}
+            </td>
+            <td>
+              {% if sp %}
+                <span class="badge badge-{{ sp.status | lower }}">{{ sp.status }}</span>
+              {% else %}
+                <span class="badge bg-secondary">No Profile</span>
+              {% endif %}
+            </td>
+            <td class="text-center">
+              <span class="badge bg-secondary">{{ s.assigned_treks | length }}</span>
+            </td>
+            <td class="small text-muted">
+              {% if sp and sp.approver %}{{ sp.approver.username }}{% else %}—{% endif %}
+            </td>
+            <td>
+              <div class="d-flex gap-1 flex-wrap">
+                {% if sp %}
+                  {% if sp.status == 'Pending' %}
+                    <form method="POST"
+                          action="{{ url_for('admin.staff_approve', user_id=s.id) }}">
+                      <button class="btn btn-sm btn-success">Approve</button>
+                    </form>
+                    <form method="POST"
+                          action="{{ url_for('admin.staff_reject', user_id=s.id) }}">
+                      <button class="btn btn-sm btn-outline-danger">Reject</button>
+                    </form>
+                  {% elif sp.status == 'Approved' %}
+                    <form method="POST"
+                          action="{{ url_for('admin.staff_blacklist', user_id=s.id) }}">
+                      <button class="btn btn-sm btn-outline-danger">Blacklist</button>
+                    </form>
+                  {% elif sp.status == 'Blacklisted' %}
+                    <form method="POST"
+                          action="{{ url_for('admin.staff_blacklist', user_id=s.id) }}">
+                      <button class="btn btn-sm btn-outline-success">Reactivate</button>
+                    </form>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="alert alert-info">
+    No staff found{% if q %} matching "{{ q }}"{% endif %}
+    {% if status_filter %} with status "{{ status_filter }}"{% endif %}.
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

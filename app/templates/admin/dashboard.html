@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Header -->
+  <div class="section-header">
+    <div>
+      <h3 class="fw-bold mb-1">Admin Dashboard</h3>
+      <p class="text-muted mb-0">Welcome back, {{ current_user.full_name }} 👋</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('admin.trek_add') }}" class="btn btn-trek btn-sm">+ Add Trek</a>
+      <a href="{{ url_for('admin.staff_list') }}{% if stats.pending_staff %}?status=Pending{% endif %}"
+         class="btn btn-sm btn-warning text-dark">
+        ⏳ Pending Staff
+        {% if stats.pending_staff %}<span class="badge bg-dark ms-1">{{ stats.pending_staff }}</span>{% endif %}
+      </a>
+    </div>
+  </div>
+
+  <!-- Stat cards row 1 -->
+  <div class="row g-3 mb-2">
+    <div class="col-6 col-md-3">
+      <a href="{{ url_for('admin.treks') }}" class="text-decoration-none">
+        <div class="card stat-card stat-card-treks h-100 p-3">
+          <div class="stat-number text-primary">{{ stats.total_treks }}</div>
+          <div class="stat-label">Total Treks</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3">
+      <a href="{{ url_for('admin.users') }}" class="text-decoration-none">
+        <div class="card stat-card stat-card-users h-100 p-3">
+          <div class="stat-number text-success">{{ stats.total_users }}</div>
+          <div class="stat-label">Trekkers</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3">
+      <a href="{{ url_for('admin.staff_list') }}" class="text-decoration-none">
+        <div class="card stat-card stat-card-staff h-100 p-3">
+          <div class="stat-number text-warning">{{ stats.total_staff }}</div>
+          <div class="stat-label">Trek Staff</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3">
+      <a href="{{ url_for('admin.bookings') }}" class="text-decoration-none">
+        <div class="card stat-card stat-card-bookings h-100 p-3">
+          <div class="stat-number text-danger">{{ stats.total_bookings }}</div>
+          <div class="stat-label">Total Bookings</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Stat cards row 2 -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <a href="{{ url_for('admin.treks') }}?status=Open" class="text-decoration-none">
+        <div class="card stat-card stat-card-open h-100 p-3">
+          <div class="stat-number" style="color:var(--trek-light)">{{ stats.open_treks }}</div>
+          <div class="stat-label">Open Treks</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3">
+      <a href="{{ url_for('admin.staff_list') }}?status=Pending" class="text-decoration-none">
+        <div class="card stat-card stat-card-pending h-100 p-3">
+          <div class="stat-number text-warning">{{ stats.pending_staff }}</div>
+          <div class="stat-label">Pending Staff</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Pending staff approvals -->
+    <div class="col-lg-5">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>⏳ Pending Staff Approvals</span>
+          <a href="{{ url_for('admin.staff_list') }}?status=Pending"
+             class="btn btn-sm btn-outline-secondary">View All</a>
+        </div>
+        <div class="card-body p-0">
+          {% if pending_staff_list %}
+            {% for sp in pending_staff_list %}
+            <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
+              <div>
+                <div class="fw-semibold">{{ sp.user.full_name }}</div>
+                <small class="text-muted">{{ sp.user.username }}
+                  {% if sp.specialization %}· {{ sp.specialization }}{% endif %}
+                </small>
+              </div>
+              <form method="POST"
+                    action="{{ url_for('admin.staff_approve', user_id=sp.user_id) }}">
+                <button class="btn btn-success btn-sm">Approve</button>
+              </form>
+            </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted p-3 mb-0">No pending staff approvals.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent bookings -->
+    <div class="col-lg-7">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>📋 Recent Bookings</span>
+          <a href="{{ url_for('admin.bookings') }}" class="btn btn-sm btn-outline-secondary">View All</a>
+        </div>
+        {% if recent_bookings %}
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th>#</th><th>Trekker</th><th>Trek</th><th>Status</th><th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for b in recent_bookings %}
+              <tr>
+                <td class="text-muted small">{{ b.id }}</td>
+                <td>{{ b.trekker.username }}</td>
+                <td class="fw-semibold">{{ b.trek.name }}</td>
+                <td><span class="badge badge-{{ b.status | lower }}">{{ b.status }}</span></td>
+                <td class="text-muted small">{{ b.booking_date.strftime('%d %b %Y') }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+          <p class="text-muted p-3 mb-0">No bookings yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+  </div><!-- /row -->
+</div>
+{% endblock %}
