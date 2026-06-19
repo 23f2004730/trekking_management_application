@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="section-header">
+    <div>
+      <h3 class="fw-bold mb-1">Welcome, {{ current_user.full_name }}! 🥾</h3>
+      <p class="text-muted mb-0">Discover and book your next adventure</p>
+    </div>
+    <a href="{{ url_for('user.treks') }}" class="btn btn-trek">Browse Treks</a>
+  </div>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <a href="{{ url_for('user.treks') }}" class="text-decoration-none">
+        <div class="card stat-card stat-card-treks h-100 p-3">
+          <div class="stat-number text-primary">{{ stats.available_treks }}</div>
+          <div class="stat-label">Available Treks</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3">
+      <a href="{{ url_for('user.bookings') }}" class="text-decoration-none">
+        <div class="card stat-card stat-card-bookings h-100 p-3">
+          <div class="stat-number text-danger">{{ stats.total_bookings }}</div>
+          <div class="stat-label">My Bookings</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3">
+      <a href="{{ url_for('user.bookings') }}?status=Booked" class="text-decoration-none">
+        <div class="card stat-card stat-card-open h-100 p-3">
+          <div class="stat-number" style="color:var(--trek-light)">{{ stats.active_bookings }}</div>
+          <div class="stat-label">Active Bookings</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3">
+      <a href="{{ url_for('user.history') }}" class="text-decoration-none">
+        <div class="card stat-card stat-card-users h-100 p-3">
+          <div class="stat-number text-success">{{ stats.completed_treks }}</div>
+          <div class="stat-label">Treks Completed</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Available treks preview -->
+    <div class="col-lg-7">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>🏔️ Open Treks — Book Now</span>
+          <a href="{{ url_for('user.treks') }}" class="btn btn-trek btn-sm">View All</a>
+        </div>
+        {% if open_treks %}
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 align-middle">
+            <thead>
+              <tr><th>Trek</th><th>Difficulty</th><th>Slots</th><th></th></tr>
+            </thead>
+            <tbody>
+              {% for trek in open_treks %}
+              <tr>
+                <td>
+                  <div class="fw-semibold">{{ trek.name }}</div>
+                  <small class="text-muted">📍{{ trek.location }} · {{ trek.duration }}d</small>
+                </td>
+                <td><span class="badge badge-{{ trek.difficulty|lower }}">{{ trek.difficulty }}</span></td>
+                <td class="{% if trek.available_slots==0 %}text-danger{% endif %}">
+                  {{ trek.available_slots }}/{{ trek.total_slots }}
+                </td>
+                <td>
+                  {% if trek.id in booked_ids %}
+                    <span class="badge badge-booked">Booked</span>
+                  {% elif trek.available_slots > 0 %}
+                    <form method="POST" action="{{ url_for('user.book_trek', trek_id=trek.id) }}">
+                      <button class="btn btn-trek btn-sm">Book</button>
+                    </form>
+                  {% else %}
+                    <span class="badge bg-secondary">Full</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="card-body text-center py-4">
+          <div style="font-size:2rem">🏕️</div>
+          <p class="text-muted mb-0 mt-2">No open treks available right now.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Recent bookings -->
+    <div class="col-lg-5">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>📋 My Recent Bookings</span>
+          <a href="{{ url_for('user.bookings') }}" class="btn btn-sm btn-outline-secondary">All</a>
+        </div>
+        {% if my_bookings %}
+        <div class="list-group list-group-flush">
+          {% for b in my_bookings %}
+          <div class="list-group-item px-3 py-2">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <div class="fw-semibold small">{{ b.trek.name }}</div>
+                <div class="text-muted" style="font-size:.75rem">
+                  {{ b.booking_date.strftime('%d %b %Y') }} ·
+                  {{ b.trek.start_date.strftime('%d %b') }}–{{ b.trek.end_date.strftime('%d %b %Y') }}
+                </div>
+              </div>
+              <span class="badge badge-{{ b.status|lower }}">{{ b.status }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="card-body text-center py-4">
+          <div style="font-size:2rem">🎒</div>
+          <p class="text-muted mt-2 mb-0 small">No bookings yet.</p>
+          <a href="{{ url_for('user.treks') }}" class="btn btn-trek btn-sm mt-2">Find a Trek</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

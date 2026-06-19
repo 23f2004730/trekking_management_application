@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}My Bookings{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="section-header">
+    <div>
+      <h3 class="fw-bold mb-1">My Bookings 📋</h3>
+      <p class="text-muted mb-0">{{ bookings | length }} booking(s) found</p>
+    </div>
+    <a href="{{ url_for('user.treks') }}" class="btn btn-trek">+ Book a Trek</a>
+  </div>
+
+  <!-- Search & Status Filter -->
+  <div class="card mb-4">
+    <div class="card-body py-3">
+      <form method="GET" action="{{ url_for('user.bookings') }}" class="row g-2 align-items-end">
+        <div class="col-md-5">
+          <input type="search" name="q" class="form-control"
+                 placeholder="Search by trek name…" value="{{ q }}">
+        </div>
+        <div class="col-md-3">
+          <select name="status" class="form-select">
+            <option value="">All Statuses</option>
+            {% for s in ['Booked','Cancelled','Completed'] %}
+            <option value="{{ s }}" {% if status_filter==s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-trek w-100">Search</button>
+        </div>
+        <div class="col-md-2">
+          <a href="{{ url_for('user.bookings') }}" class="btn btn-outline-secondary w-100">Clear</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Status tabs -->
+  <div class="d-flex gap-2 mb-3">
+    <a href="{{ url_for('user.bookings') }}"
+       class="btn btn-sm {% if not status_filter %}btn-trek{% else %}btn-outline-secondary{% endif %}">All</a>
+    {% for s,cls in [('Booked','primary'),('Completed','success'),('Cancelled','secondary')] %}
+    <a href="{{ url_for('user.bookings') }}?status={{ s }}"
+       class="btn btn-sm {% if status_filter==s %}btn-{{ cls }}{% else %}btn-outline-{{ cls }}{% endif %}">
+      {{ s }}
+    </a>
+    {% endfor %}
+  </div>
+
+  {% if bookings %}
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Trek</th>
+            <th>Location</th>
+            <th>Trek Dates</th>
+            <th>Booked On</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in bookings %}
+          <tr class="{% if b.status=='Cancelled' %}table-secondary{% endif %}">
+            <td class="text-muted small">{{ b.id }}</td>
+            <td>
+              <div class="fw-semibold">{{ b.trek.name }}</div>
+              <span class="badge badge-{{ b.trek.difficulty|lower }}">{{ b.trek.difficulty }}</span>
+            </td>
+            <td class="small text-muted">{{ b.trek.location }}</td>
+            <td class="small text-muted">
+              {{ b.trek.start_date.strftime('%d %b') }} –
+              {{ b.trek.end_date.strftime('%d %b %Y') }}
+            </td>
+            <td class="small text-muted">{{ b.booking_date.strftime('%d %b %Y') }}</td>
+            <td><span class="badge badge-{{ b.status|lower }}">{{ b.status }}</span></td>
+            <td>
+              <span class="badge
+                {% if b.payment_status=='Paid' %}bg-success
+                {% elif b.payment_status=='Refunded' %}bg-info text-dark
+                {% else %}bg-warning text-dark{% endif %}">
+                {{ b.payment_status }}
+              </span>
+            </td>
+            <td>
+              {% if b.status == 'Booked' %}
+              <form method="POST"
+                    action="{{ url_for('user.cancel_booking', booking_id=b.id) }}">
+                <button class="btn btn-sm btn-outline-danger"
+                  onclick="return confirm('Cancel your booking for {{ b.trek.name }}?')">
+                  Cancel
+                </button>
+              </form>
+              {% else %}
+              <span class="text-muted small">—</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <div style="font-size:3rem">🎒</div>
+      <h5 class="fw-bold mt-3">No Bookings Yet</h5>
+      <p class="text-muted mb-3">
+        {% if q or status_filter %}No bookings match your filters.
+        {% else %}You haven't booked any treks yet.{% endif %}
+      </p>
+      <a href="{{ url_for('user.treks') }}" class="btn btn-trek">Browse Treks</a>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

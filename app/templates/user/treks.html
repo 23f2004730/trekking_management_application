@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}Browse Treks{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="section-header">
+    <div>
+      <h3 class="fw-bold mb-1">Browse Treks 🏔️</h3>
+      <p class="text-muted mb-0">{{ treks | length }} open trek(s) found</p>
+    </div>
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="card mb-4">
+    <div class="card-body py-3">
+      <form method="GET" action="{{ url_for('user.treks') }}" class="row g-2 align-items-end">
+        <div class="col-md-4">
+          <input type="search" name="q" class="form-control"
+                 placeholder="Search by name or location…" value="{{ q }}">
+        </div>
+        <div class="col-md-2">
+          <select name="difficulty" class="form-select">
+            <option value="">All Difficulties</option>
+            {% for d in ['Easy','Moderate','Hard'] %}
+            <option value="{{ d }}" {% if diff_filter==d %}selected{% endif %}>{{ d }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select name="location" class="form-select">
+            <option value="">All Locations</option>
+            {% for loc in locations %}
+            <option value="{{ loc }}" {% if loc_filter==loc %}selected{% endif %}>{{ loc }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-trek w-100">Search</button>
+        </div>
+        <div class="col-md-1">
+          <a href="{{ url_for('user.treks') }}" class="btn btn-outline-secondary w-100">✕</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Difficulty quick-filter tabs -->
+  <div class="d-flex gap-2 mb-4 flex-wrap">
+    <a href="{{ url_for('user.treks') }}"
+       class="btn btn-sm {% if not diff_filter %}btn-trek{% else %}btn-outline-secondary{% endif %}">
+      All
+    </a>
+    {% for d, cls in [('Easy','success'),('Moderate','warning'),('Hard','danger')] %}
+    <a href="{{ url_for('user.treks') }}?difficulty={{ d }}"
+       class="btn btn-sm {% if diff_filter==d %}btn-{{ cls }}{% else %}btn-outline-{{ cls }}{% endif %}">
+      {{ d }}
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- Trek Cards -->
+  {% if treks %}
+  <div class="row g-4">
+    {% for trek in treks %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card trek-card h-100">
+
+        <!-- Difficulty ribbon -->
+        <div class="card-header d-flex justify-content-between align-items-center py-2">
+          <span class="badge badge-{{ trek.difficulty|lower }} me-2">{{ trek.difficulty }}</span>
+          <span class="text-muted small">{{ trek.duration }} day{{ 's' if trek.duration > 1 }}</span>
+        </div>
+
+        <div class="card-body">
+          <h5 class="card-title fw-bold mb-1">{{ trek.name }}</h5>
+          <p class="text-muted small mb-2">📍 {{ trek.location }}</p>
+
+          {% if trek.description %}
+          <p class="card-text small text-muted mb-3" style="line-height:1.4">
+            {{ trek.description[:120] }}{% if trek.description|length > 120 %}…{% endif %}
+          </p>
+          {% endif %}
+
+          <!-- Details grid -->
+          <div class="row g-2 small mb-3">
+            <div class="col-6">
+              <div class="text-muted">📅 Start</div>
+              <div class="fw-semibold">{{ trek.start_date.strftime('%d %b %Y') }}</div>
+            </div>
+            <div class="col-6">
+              <div class="text-muted">🏁 End</div>
+              <div class="fw-semibold">{{ trek.end_date.strftime('%d %b %Y') }}</div>
+            </div>
+            <div class="col-6">
+              <div class="text-muted">💺 Slots Left</div>
+              <div class="fw-semibold {% if trek.available_slots == 0 %}text-danger{% endif %}">
+                {{ trek.available_slots }} / {{ trek.total_slots }}
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="text-muted">💰 Price</div>
+              <div class="fw-semibold">
+                {% if trek.price > 0 %}₹{{ "%.0f"|format(trek.price) }}
+                {% else %}Free{% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Slot fill bar -->
+          {% set fill = ((trek.total_slots - trek.available_slots) / trek.total_slots * 100)|int %}
+          <div class="progress mb-3" style="height:5px">
+            <div class="progress-bar
+              {% if fill >= 90 %}bg-danger{% elif fill >= 60 %}bg-warning{% else %}bg-success{% endif %}"
+              style="width:{{ fill }}%"></div>
+          </div>
+
+          {% if trek.assigned_staff %}
+          <p class="text-muted small mb-0">
+            👤 Guide: <span class="fw-semibold">{{ trek.assigned_staff.full_name }}</span>
+          </p>
+          {% endif %}
+        </div>
+
+        <!-- Action footer -->
+        <div class="card-footer bg-transparent pt-0">
+          {% if trek.id in booked_ids %}
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge badge-booked px-3 py-2">✅ Already Booked</span>
+              <a href="{{ url_for('user.bookings') }}" class="btn btn-sm btn-outline-secondary">
+                View Booking
+              </a>
+            </div>
+          {% elif trek.available_slots > 0 %}
+            <form method="POST" action="{{ url_for('user.book_trek', trek_id=trek.id) }}">
+              <button class="btn btn-trek w-100 fw-semibold">🥾 Book This Trek</button>
+            </form>
+          {% else %}
+            <button class="btn btn-secondary w-100" disabled>Fully Booked</button>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <div style="font-size:3rem">🔍</div>
+      <h5 class="fw-bold mt-3">No Treks Found</h5>
+      <p class="text-muted">
+        {% if q or diff_filter or loc_filter %}
+          No open treks match your filters.
+          <a href="{{ url_for('user.treks') }}">Clear filters</a>
+        {% else %}
+          No open treks available right now. Check back soon!
+        {% endif %}
+      </p>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
