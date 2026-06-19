@@ -348,6 +348,32 @@ def bookings():
                            q=q, status_filter=status_filter)
 
 
+
+# PER-TREK BOOKING HISTORY  (M6)
+@admin_bp.route('/treks/<int:trek_id>/bookings')
+@admin_required
+def trek_bookings(trek_id):
+    """Full booking history for a single trek — all participants, all statuses."""
+    trek = db.get_or_404(Trek, trek_id)
+
+    bookings = (
+        Booking.query
+        .filter_by(trek_id=trek_id)
+        .join(User, Booking.user_id == User.id)
+        .order_by(Booking.booking_date.desc())
+        .all()
+    )
+
+    stats = {
+        'total'    : len(bookings),
+        'booked'   : sum(1 for b in bookings if b.status == 'Booked'),
+        'completed': sum(1 for b in bookings if b.status == 'Completed'),
+        'cancelled': sum(1 for b in bookings if b.status == 'Cancelled'),
+    }
+
+    return render_template('admin/trek_bookings.html',
+                           trek=trek, bookings=bookings, stats=stats)
+
 # PRIVATE HELPERS
 def _get_approved_staff():
     """Return all approved staff users for assignment dropdowns."""

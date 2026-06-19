@@ -77,7 +77,7 @@ def trek_update(trek_id):
     new_slots  = request.form.get('available_slots', '').strip()
     changed    = False
 
-    # ── Status update 
+    # ── Status update ─────────────────────────────────────────────────────────
     if new_status and new_status != trek.status:
         if new_status not in STAFF_ALLOWED_STATUSES:
             flash(f'Invalid status. You can only set: {", ".join(STAFF_ALLOWED_STATUSES)}.', 'danger')
@@ -94,7 +94,20 @@ def trek_update(trek_id):
         trek.status = new_status
         changed = True
 
-    # ── Slots update 
+        # Auto-complete all 'Booked' bookings when trek is marked Completed.
+        # Keeps booking status in sync with trek lifecycle (M6 requirement).
+        if new_status == 'Completed':
+            active_bks = Booking.query.filter_by(
+                trek_id=trek.id, status='Booked'
+            ).all()
+            auto_n = len(active_bks)
+            for b in active_bks:
+                b.status = 'Completed'
+            if auto_n:
+                flash(f'{auto_n} participant booking(s) auto-marked as Completed.', 'info')
+
+
+    # ── Slots update ──────────────────────────────────────────────────────────
     if new_slots != '':
         try:
             slots_val = int(new_slots)

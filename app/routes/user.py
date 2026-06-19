@@ -6,8 +6,7 @@ from app.utils import trekker_required
 
 user_bp = Blueprint('user', __name__)
 
-
-# DASHBOARD
+# DASHBOAR
 @user_bp.route('/dashboard')
 @trekker_required
 def dashboard():
@@ -32,8 +31,7 @@ def dashboard():
                            booked_ids=booked_ids,
                            stats=stats)
 
-
-# BROWSE TREKS
+# BROWSE TREK
 @user_bp.route('/treks')
 @trekker_required
 def treks():
@@ -78,8 +76,7 @@ def treks():
                            diff_filter=diff_filter,
                            loc_filter=loc_filter)
 
-
-# BOOK A TREK
+# BOOK A TRE
 @user_bp.route('/treks/<int:trek_id>/book', methods=['POST'])
 @trekker_required
 def book_trek(trek_id):
@@ -122,8 +119,7 @@ def book_trek(trek_id):
     )
     return redirect(url_for('user.bookings'))
 
-
-# MY BOOKINGS
+# MY BOOKING
 @user_bp.route('/bookings')
 @trekker_required
 def bookings():
@@ -146,8 +142,7 @@ def bookings():
                            q=q,
                            status_filter=status_filter)
 
-
-# CANCEL A BOOKING
+# CANCEL A BOOKIN
 @user_bp.route('/bookings/<int:booking_id>/cancel', methods=['POST'])
 @trekker_required
 def cancel_booking(booking_id):
@@ -176,8 +171,7 @@ def cancel_booking(booking_id):
     )
     return redirect(url_for('user.bookings'))
 
-
-# TREKKING HISTORY
+# TREKKING HISTOR
 @user_bp.route('/history')
 @trekker_required
 def history():
@@ -203,8 +197,7 @@ def history():
                            all_bookings=all_bookings,
                            stats=stats)
 
-
-# PROFILE — view and edit
+# PROFILE — view and edi
 @user_bp.route('/profile', methods=['GET', 'POST'])
 @trekker_required
 def profile():
@@ -262,3 +255,16 @@ def profile():
         return redirect(url_for('user.profile'))
 
     return render_template('user/profile.html', form_data={})
+
+# BOOKING DETAIL  (M6)
+@user_bp.route('/bookings/<int:booking_id>')
+@trekker_required
+def booking_detail(booking_id):
+    """Full details for a single booking — trekker can only see their own."""
+    booking = db.get_or_404(Booking, booking_id)
+
+    # Ownership guard — abort 403 if booking belongs to someone else
+    if booking.user_id != current_user.id:
+        abort(403)
+
+    return render_template('user/booking_detail.html', booking=booking)

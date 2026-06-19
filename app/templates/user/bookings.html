@@ -90,6 +90,8 @@
               </span>
             </td>
             <td>
+              <a href="{{ url_for('user.booking_detail', booking_id=b.id) }}"
+                 class="btn btn-sm btn-outline-secondary me-1">View</a>
               {% if b.status == 'Booked' %}
               <form method="POST"
                     action="{{ url_for('user.cancel_booking', booking_id=b.id) }}">

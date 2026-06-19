@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block title %}{{ trek.name }} — Booking History{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('admin.treks') }}">Treks</a></li>
+      <li class="breadcrumb-item active">{{ trek.name }} — Bookings</li>
+    </ol>
+  </nav>
+
+  <div class="section-header">
+    <div>
+      <h3 class="fw-bold mb-1">{{ trek.name }}</h3>
+      <div class="d-flex gap-2 align-items-center">
+        <span class="badge badge-{{ trek.status|lower }}">{{ trek.status }}</span>
+        <span class="badge badge-{{ trek.difficulty|lower }}">{{ trek.difficulty }}</span>
+        <span class="text-muted small">📍 {{ trek.location }}</span>
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('admin.trek_edit', trek_id=trek.id) }}"
+         class="btn btn-sm btn-outline-primary">Edit Trek</a>
+      <a href="{{ url_for('admin.treks') }}"
+         class="btn btn-sm btn-outline-secondary">← All Treks</a>
+    </div>
+  </div>
+
+  <!-- Trek Info Bar -->
+  <div class="card mb-4">
+    <div class="card-body py-3">
+      <div class="row g-3 small">
+        <div class="col-6 col-md-2">
+          <div class="text-muted">Duration</div>
+          <div class="fw-semibold">{{ trek.duration }} day{{ 's' if trek.duration > 1 }}</div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="text-muted">Start Date</div>
+          <div class="fw-semibold">{{ trek.start_date.strftime('%d %b %Y') }}</div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="text-muted">End Date</div>
+          <div class="fw-semibold">{{ trek.end_date.strftime('%d %b %Y') }}</div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="text-muted">Slots</div>
+          <div class="fw-semibold">{{ trek.available_slots }} / {{ trek.total_slots }}</div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="text-muted">Assigned Staff</div>
+          <div class="fw-semibold">
+            {{ trek.assigned_staff.full_name if trek.assigned_staff else '—' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card stat-card p-3 text-center">
+        <div class="stat-number text-primary">{{ stats.total }}</div>
+        <div class="stat-label">Total Bookings</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card stat-card p-3 text-center">
+        <div class="stat-number" style="color:var(--trek-light)">{{ stats.booked }}</div>
+        <div class="stat-label">Active (Booked)</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card stat-card p-3 text-center">
+        <div class="stat-number text-success">{{ stats.completed }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card stat-card p-3 text-center">
+        <div class="stat-number text-secondary">{{ stats.cancelled }}</div>
+        <div class="stat-label">Cancelled</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bookings Table -->
+  {% if bookings %}
+  <div class="card">
+    <div class="card-header fw-semibold">
+      All Booking Records for {{ trek.name }}
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Trekker</th>
+            <th>Contact</th>
+            <th>Booked On</th>
+            <th>Booking Status</th>
+            <th>Payment</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in bookings %}
+          <tr class="{% if b.status=='Cancelled' %}table-secondary{% elif b.status=='Completed' %}table-success bg-opacity-10{% endif %}">
+            <td class="text-muted small">{{ b.id }}</td>
+            <td>
+              <div class="fw-semibold">{{ b.trekker.full_name }}</div>
+              <small class="text-muted">@{{ b.trekker.username }}</small>
+            </td>
+            <td class="small text-muted">
+              {{ b.trekker.email }}<br>
+              {{ b.trekker.phone or '—' }}
+            </td>
+            <td class="small text-muted">
+              {{ b.booking_date.strftime('%d %b %Y, %H:%M') }}
+            </td>
+            <td>
+              <span class="badge badge-{{ b.status|lower }}">{{ b.status }}</span>
+            </td>
+            <td>
+              <span class="badge
+                {% if b.payment_status == 'Paid' %}bg-success
+                {% elif b.payment_status == 'Refunded' %}bg-info text-dark
+                {% else %}bg-warning text-dark{% endif %}">
+                {{ b.payment_status }}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <div style="font-size:2.5rem">📭</div>
+      <h6 class="fw-semibold mt-3">No Bookings Yet</h6>
+      <p class="text-muted small mb-0">No one has booked this trek yet.</p>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

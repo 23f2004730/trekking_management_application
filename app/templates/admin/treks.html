@@ -111,6 +111,8 @@
             </td>
             <td>
               <div class="d-flex gap-1">
+                <a href="{{ url_for('admin.trek_bookings', trek_id=trek.id) }}"
+                   class="btn btn-sm btn-outline-secondary">Bookings</a>
                 <a href="{{ url_for('admin.trek_edit', trek_id=trek.id) }}"
                    class="btn btn-sm btn-outline-primary">Edit</a>
                 <form method="POST"
