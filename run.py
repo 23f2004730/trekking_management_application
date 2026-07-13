@@ -1,6 +1,3 @@
-# run.py — Application Entry Point
-# Start the app with: python run.py
-
 from app import create_app
 
 app = create_app()

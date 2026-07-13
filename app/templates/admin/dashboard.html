@@ -14,7 +14,7 @@
       <a href="{{ url_for('admin.trek_add') }}" class="btn btn-trek btn-sm">+ Add Trek</a>
       <a href="{{ url_for('admin.staff_list') }}{% if stats.pending_staff %}?status=Pending{% endif %}"
          class="btn btn-sm btn-warning text-dark">
-        ⏳ Pending Staff
+        Pending Staff
         {% if stats.pending_staff %}<span class="badge bg-dark ms-1">{{ stats.pending_staff }}</span>{% endif %}
       </a>
     </div>
@@ -82,7 +82,7 @@
     <div class="col-lg-5">
       <div class="card h-100">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <span>⏳ Pending Staff Approvals</span>
+          <span>Pending Staff Approvals</span>
           <a href="{{ url_for('admin.staff_list') }}?status=Pending"
              class="btn btn-sm btn-outline-secondary">View All</a>
         </div>
@@ -113,7 +113,7 @@
     <div class="col-lg-7">
       <div class="card h-100">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <span>📋 Recent Bookings</span>
+          <span>Recent Bookings</span>
           <a href="{{ url_for('admin.bookings') }}" class="btn btn-sm btn-outline-secondary">View All</a>
         </div>
         {% if recent_bookings %}
@@ -130,7 +130,7 @@
                 <td class="text-muted small">{{ b.id }}</td>
                 <td>{{ b.trekker.username }}</td>
                 <td class="fw-semibold">{{ b.trek.name }}</td>
-                <td><span class="badge badge-{{ b.status | lower }}">{{ b.status }}</span></td>
+                <td><span class="badge badge-{{ b.status | lower }} text-dark">{{ b.status }}</span></td>
                 <td class="text-muted small">{{ b.booking_date.strftime('%d %b %Y') }}</td>
               </tr>
               {% endfor %}

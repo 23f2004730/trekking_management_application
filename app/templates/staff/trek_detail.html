@@ -76,7 +76,7 @@
 
       <!-- Booking Summary Card -->
       <div class="card mb-3">
-        <div class="card-header fw-semibold">📊 Booking Summary</div>
+        <div class="card-header fw-semibold">Booking Summary</div>
         <div class="card-body">
           <div class="d-flex justify-content-between mb-2">
             <span class="small text-muted">Active Bookings</span>
@@ -115,7 +115,7 @@
 
       <!-- Management Form -->
       <div class="card">
-        <div class="card-header fw-semibold">⚙️ Manage Trek</div>
+        <div class="card-header fw-semibold"> Manage Trek</div>
         <div class="card-body">
           <form method="POST"
                 action="{{ url_for('staff.trek_update', trek_id=trek.id) }}">
@@ -149,7 +149,7 @@
             </div>
 
             <button type="submit" class="btn btn-trek w-100 btn-sm fw-semibold">
-              💾 Update Trek
+              Update Trek
             </button>
           </form>
 
@@ -172,12 +172,12 @@
             {% if trek.status in ('Open', 'Closed') %}
             <form method="POST" action="{{ url_for('staff.trek_update', trek_id=trek.id) }}">
               <input type="hidden" name="status" value="Completed">
-              <button class="btn btn-secondary btn-sm w-100">✅ Mark as Completed</button>
+              <button class="btn btn-secondary btn-sm w-100">Mark as Completed</button>
             </form>
             {% endif %}
             {% if trek.status == 'Completed' %}
             <div class="alert alert-success py-2 px-3 small mb-0">
-              ✅ This trek has been marked as Completed.
+              This trek has been marked as Completed.
             </div>
             {% endif %}
           </div>
@@ -259,7 +259,7 @@
 
         {% else %}
         <div class="card-body text-center py-5">
-          <div style="font-size:2.5rem">🎒</div>
+          <div style="font-size:2.5rem"></div>
           <h6 class="fw-semibold mt-3">No Participants Yet</h6>
           <p class="text-muted small mb-0">
             Once the trek is Open, trekkers can book their spots.

@@ -77,10 +77,10 @@
             </td>
             <td>{{ trek.location }}</td>
             <td>
-              <span class="badge badge-{{ trek.difficulty | lower }}">{{ trek.difficulty }}</span>
+              <span class="badge badge-{{ trek.difficulty | lower }} text-dark">{{ trek.difficulty }}</span>
             </td>
             <td>
-              <span class="badge badge-{{ trek.status | lower }}">{{ trek.status }}</span>
+              <span class="badge badge-{{ trek.status | lower }} text-dark">{{ trek.status }}</span>
             </td>
             <td>
               <span class="{% if trek.available_slots == 0 %}text-danger{% endif %}">

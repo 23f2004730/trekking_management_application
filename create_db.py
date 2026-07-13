@@ -8,7 +8,7 @@ with app.app_context():
 
     # STEP 1 — Create all tables-
     db.create_all()
-    print("\n✅ All database tables created successfully.\n")
+    print("\n All database tables created successfully.\n")
     print("   Tables: users, treks, bookings, staff_profiles")
     print("-" * 55)
 
@@ -24,7 +24,7 @@ with app.app_context():
         admin.set_password("admin123")
         db.session.add(admin)
         db.session.commit()
-        print("✅ Admin seeded")
+        print(" Admin seeded")
         print("   username : admin")
         print("   password : admin123")
     else:
@@ -45,7 +45,7 @@ with app.app_context():
             u.set_password("password123")
             db.session.add(u)
     db.session.commit()
-    print("✅ Sample trekkers seeded (password: password123)")
+    print(" Sample trekkers seeded (password: password123)")
     print("   Users: arjun, priya, rahul")
     print("-" * 55)
 
@@ -94,7 +94,7 @@ with app.app_context():
             )
             db.session.add(sp)
     db.session.commit()
-    print("✅ Sample staff seeded (password: staffpass123)")
+    print(" Sample staff seeded (password: staffpass123)")
     print("   Staff : ravi_guide (Approved), meena_guide (Pending)")
     print("-" * 55)
 
@@ -153,7 +153,7 @@ with app.app_context():
             trek = Trek(created_by=admin_user.id, **t)
             db.session.add(trek)
     db.session.commit()
-    print("✅ Sample treks seeded")
+    print(" Sample treks seeded")
     print("   Treks : Kedarnath (Open·Hard), Valley of Flowers (Open·Moderate),")
     print("           Coorg Forest Walk (Approved·Easy), Roopkund (Pending·Hard),")
     print("           Hampta Pass (Closed·Moderate)")
@@ -178,13 +178,13 @@ with app.app_context():
             # Reflect slot reduction
             kedarnath.available_slots -= 1
             db.session.commit()
-            print("✅ Sample booking seeded: arjun → Kedarnath Trek")
+            print(" Sample booking seeded: arjun → Kedarnath Trek")
         else:
-            print("ℹ️  Sample booking already exists — skipping.")
+            print("ℹ  Sample booking already exists — skipping.")
 
     print("-" * 55)
-    print("\n🚀 Database ready!  Run  python run.py  to start the app.")
-    print("\n📋 Login credentials:")
+    print("\n Database ready!  Run  python run.py  to start the app.")
+    print("\n Login credentials:")
     print("   Admin   → username: admin       | password: admin123")
     print("   Staff   → username: ravi_guide  | password: staffpass123")
     print("   Trekker → username: arjun       | password: password123")

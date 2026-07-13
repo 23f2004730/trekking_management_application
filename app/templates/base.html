@@ -7,119 +7,104 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block extra_css %}{% endblock %}
+    <style>
+        .top-bar {
+            background: #1a3a2a;
+            padding: 0.55rem 0;
+            border-bottom: 3px solid #2d6a4f;
+        }
+        .top-bar .brand {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .top-bar .user-info { color: rgba(255,255,255,0.7); font-size: 0.85rem; }
+        .btn-logout {
+            background: #fff;
+            color: #1a3a2a;
+            font-weight: 700;
+            border: none;
+            padding: 0.3rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .btn-logout:hover { background: #d4edda; color: #1a3a2a; }
+        .side-nav {
+            width: 200px;
+            flex-shrink: 0;
+            background: #f0f4f0;
+            border-right: 1px solid #dee2e6;
+            min-height: calc(100vh - 58px);
+            padding: 1rem 0;
+        }
+        .side-nav a {
+            display: block;
+            padding: 0.5rem 1.2rem;
+            color: #2d4a2d;
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-left: 3px solid transparent;
+        }
+        .side-nav a:hover, .side-nav a.active {
+            background: #d4edda;
+            border-left-color: #2d6a4f;
+            font-weight: 600;
+            color: #1a3a2a;
+        }
+        .side-nav .nav-section {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            padding: 0.8rem 1.2rem 0.3rem;
+            font-weight: 600;
+        }
+        .side-nav .logout-link {
+            color: #c0392b !important;
+            font-weight: 600 !important;
+            border-top: 1px solid #ccc;
+            margin-top: 0.5rem;
+        }
+        .main-content { padding: 1.5rem; }
+        .auth-wrapper {
+            max-width: 500px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+    </style>
 </head>
 <body>
 
-<!-- ═══ NAVBAR ═══════════════════════════════════════════════════════════════ -->
-<nav class="navbar navbar-expand-lg navbar-trek">
-  <div class="container">
-    <a class="navbar-brand text-white" href="{{ url_for('auth.index') }}">
-      🏔️ TrekManager
-    </a>
-    <button class="navbar-toggler" type="button"
-            data-bs-toggle="collapse" data-bs-target="#mainNav"
-            aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+<!-- ═══ TOP BAR (always fully visible) ══════════════════════════════════════ -->
+<div class="top-bar">
+  <div class="container-fluid px-3 d-flex align-items-center justify-content-between">
 
-    <div class="collapse navbar-collapse" id="mainNav">
+    <a href="{{ url_for('auth.index') }}" class="brand">TrekManager</a>
 
-      <!-- Left nav links (role-specific) -->
-      <ul class="navbar-nav me-auto">
-        {% if current_user.is_authenticated %}
-
-          {% if current_user.role == 'admin' %}
-            <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}"
-                 href="{{ url_for('admin.dashboard') }}">Dashboard</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'admin.treks' %}active{% endif %}"
-                 href="{{ url_for('admin.treks') }}">Treks</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'admin.users' %}active{% endif %}"
-                 href="{{ url_for('admin.users') }}">Users</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'admin.staff_list' %}active{% endif %}"
-                 href="{{ url_for('admin.staff_list') }}">Staff</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'admin.bookings' %}active{% endif %}"
-                 href="{{ url_for('admin.bookings') }}">Bookings</a>
-            </li>
-
-          {% elif current_user.role == 'staff' %}
-            <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'staff.dashboard' %}active{% endif %}"
-                 href="{{ url_for('staff.dashboard') }}">Dashboard</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'staff.trek_detail' %}active{% endif %}"
-                 href="{{ url_for('staff.dashboard') }}">My Treks</a>
-            </li>
-
-          {% else %} {# trekker #}
-            <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'user.dashboard' %}active{% endif %}"
-                 href="{{ url_for('user.dashboard') }}">Home</a>
-              <a class="nav-link {% if request.endpoint == 'user.treks' %}active{% endif %}"
-                 href="{{ url_for('user.treks') }}">Browse Treks</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'user.bookings' %}active{% endif %}"
-                 href="{{ url_for('user.bookings') }}">My Bookings</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% if request.endpoint == 'user.history' %}active{% endif %}"
-                 href="{{ url_for('user.history') }}">History</a>
-              <a class="nav-link {% if request.endpoint == 'user.profile' %}active{% endif %}"
-                 href="{{ url_for('user.profile') }}">Profile</a>
-            </li>
-          {% endif %}
-
-        {% endif %}
-      </ul>
-
-      <!-- Right nav (user info + logout / login + register) -->
-      <ul class="navbar-nav align-items-center">
-        {% if current_user.is_authenticated %}
-          <li class="nav-item me-2">
-            <span class="role-badge role-badge-{{ current_user.role }}">
-              {{ current_user.role }}
-            </span>
-          </li>
-          <li class="nav-item me-3">
-            <span class="nav-link py-0 text-white-50">
-              {{ current_user.full_name }}
-            </span>
-          </li>
-          <li class="nav-item">
-            <a class="btn btn-outline-light btn-sm"
-               href="{{ url_for('auth.logout') }}">Logout</a>
-          </li>
-        {% else %}
-          <li class="nav-item me-2">
-            <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="btn btn-light btn-sm text-dark fw-semibold"
-               href="{{ url_for('auth.register') }}">Register</a>
-          </li>
-        {% endif %}
-      </ul>
-
+    <div class="d-flex align-items-center gap-3">
+      {% if current_user.is_authenticated %}
+        <span class="user-info d-none d-sm-inline">
+          {{ current_user.role | upper }} &nbsp;|&nbsp; {{ current_user.full_name }}
+        </span>
+        <a href="{{ url_for('auth.logout') }}" class="btn-logout">Logout</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn-logout">Login</a>
+        <a href="{{ url_for('auth.register') }}"
+           class="btn-logout" style="margin-left:4px">Register</a>
+      {% endif %}
     </div>
+
   </div>
-</nav>
+</div>
 
 <!-- ═══ FLASH MESSAGES ═══════════════════════════════════════════════════════ -->
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    <div class="container mt-3">
+    <div class="container-fluid px-3 mt-2">
       {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        <div class="alert alert-{{ category }} alert-dismissible fade show py-2 mb-1" role="alert">
           {{ message }}
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -128,16 +113,76 @@
   {% endif %}
 {% endwith %}
 
-<!-- ═══ MAIN CONTENT ═════════════════════════════════════════════════════════ -->
-<main>
-  {% block content %}{% endblock %}
-</main>
+<!-- ═══ BODY: sidebar + content (authenticated) OR plain (unauthenticated) ══ -->
+<div class="{% if current_user.is_authenticated %}d-flex{% endif %}">
+
+  <!-- SIDEBAR — only when logged in -->
+  {% if current_user.is_authenticated %}
+  <div class="side-nav">
+
+    {% if current_user.role == 'admin' %}
+      <div class="nav-section">Admin</div>
+      <a href="{{ url_for('admin.dashboard') }}"
+         class="{% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+         Dashboard</a>
+      <a href="{{ url_for('admin.treks') }}"
+         class="{% if 'trek' in (request.endpoint or '') and request.endpoint != 'admin.bookings' %}active{% endif %}">
+         Treks</a>
+      <a href="{{ url_for('admin.users') }}"
+         class="{% if request.endpoint == 'admin.users' %}active{% endif %}">
+         Users</a>
+      <a href="{{ url_for('admin.staff_list') }}"
+         class="{% if 'staff' in (request.endpoint or '') %}active{% endif %}">
+         Staff</a>
+      <a href="{{ url_for('admin.bookings') }}"
+         class="{% if request.endpoint == 'admin.bookings' %}active{% endif %}">
+         Bookings</a>
+
+    {% elif current_user.role == 'staff' %}
+      <div class="nav-section">Staff</div>
+      <a href="{{ url_for('staff.dashboard') }}"
+         class="{% if request.endpoint == 'staff.dashboard' %}active{% endif %}">
+         Dashboard</a>
+      <a href="{{ url_for('staff.dashboard') }}"
+         class="{% if request.endpoint == 'staff.trek_detail' %}active{% endif %}">
+         My Treks</a>
+
+    {% elif current_user.role == 'trekker' %}
+      <div class="nav-section">Trekker</div>
+      <a href="{{ url_for('user.dashboard') }}"
+         class="{% if request.endpoint == 'user.dashboard' %}active{% endif %}">
+         Home</a>
+      <a href="{{ url_for('user.treks') }}"
+         class="{% if request.endpoint == 'user.treks' %}active{% endif %}">
+         Browse Treks</a>
+      <a href="{{ url_for('user.bookings') }}"
+         class="{% if request.endpoint in ('user.bookings','user.booking_detail') %}active{% endif %}">
+         My Bookings</a>
+      <a href="{{ url_for('user.history') }}"
+         class="{% if request.endpoint == 'user.history' %}active{% endif %}">
+         History</a>
+      <a href="{{ url_for('user.profile') }}"
+         class="{% if request.endpoint == 'user.profile' %}active{% endif %}">
+         Profile</a>
+    {% endif %}
+
+    <a href="{{ url_for('auth.logout') }}" class="logout-link">Logout</a>
+
+  </div>
+  {% endif %}
+
+  <!-- MAIN CONTENT — always rendered, layout differs by auth state -->
+  <div class="{% if current_user.is_authenticated %}main-content flex-grow-1{% else %}auth-wrapper{% endif %}">
+    {% block content %}{% endblock %}
+  </div>
+
+</div>
 
 <!-- ═══ FOOTER ═══════════════════════════════════════════════════════════════ -->
-<footer class="footer mt-4">
-  <div class="container text-center">
+<footer class="footer mt-4 py-3 border-top">
+  <div class="container-fluid text-center">
     <small class="text-muted">
-      🏔️ TrekManager &mdash; Trekking Management Application &nbsp;|&nbsp; MAD-I Project
+      TrekManager &mdash; Trekking Management Application &nbsp;|&nbsp; MAD-I Project
     </small>
   </div>
 </footer>

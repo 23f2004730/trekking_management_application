@@ -6,7 +6,7 @@
 
   <div class="section-header">
     <div>
-      <h3 class="fw-bold mb-1">Browse Treks 🏔️</h3>
+      <h3 class="fw-bold mb-1">Browse Treks</h3>
       <p class="text-muted mb-0">{{ treks | length }} open trek(s) found</p>
     </div>
   </div>
@@ -74,7 +74,7 @@
 
         <div class="card-body">
           <h5 class="card-title fw-bold mb-1">{{ trek.name }}</h5>
-          <p class="text-muted small mb-2">📍 {{ trek.location }}</p>
+          <p class="text-muted small mb-2">{{ trek.location }}</p>
 
           {% if trek.description %}
           <p class="card-text small text-muted mb-3" style="line-height:1.4">
@@ -85,21 +85,21 @@
           <!-- Details grid -->
           <div class="row g-2 small mb-3">
             <div class="col-6">
-              <div class="text-muted">📅 Start</div>
+              <div class="text-muted"> Start</div>
               <div class="fw-semibold">{{ trek.start_date.strftime('%d %b %Y') }}</div>
             </div>
             <div class="col-6">
-              <div class="text-muted">🏁 End</div>
+              <div class="text-muted"> End</div>
               <div class="fw-semibold">{{ trek.end_date.strftime('%d %b %Y') }}</div>
             </div>
             <div class="col-6">
-              <div class="text-muted">💺 Slots Left</div>
+              <div class="text-muted">Slots Left</div>
               <div class="fw-semibold {% if trek.available_slots == 0 %}text-danger{% endif %}">
                 {{ trek.available_slots }} / {{ trek.total_slots }}
               </div>
             </div>
             <div class="col-6">
-              <div class="text-muted">💰 Price</div>
+              <div class="text-muted">Price</div>
               <div class="fw-semibold">
                 {% if trek.price > 0 %}₹{{ "%.0f"|format(trek.price) }}
                 {% else %}Free{% endif %}
@@ -110,9 +110,8 @@
           <!-- Slot fill bar -->
           {% set fill = ((trek.total_slots - trek.available_slots) / trek.total_slots * 100)|int %}
           <div class="progress mb-3" style="height:5px">
-            <div class="progress-bar
-              {% if fill >= 90 %}bg-danger{% elif fill >= 60 %}bg-warning{% else %}bg-success{% endif %}"
-              style="width:{{ fill }}%"></div>
+            <div class="progress-bar {% if fill >= 90 %}bg-danger{% elif fill >= 60 %}bg-warning{% else %}bg-success{% endif %}"
+                 style="width: {{ fill }}%;"></div>
           </div>
 
           {% if trek.assigned_staff %}
@@ -126,14 +125,14 @@
         <div class="card-footer bg-transparent pt-0">
           {% if trek.id in booked_ids %}
             <div class="d-flex align-items-center gap-2">
-              <span class="badge badge-booked px-3 py-2">✅ Already Booked</span>
+              <span class="badge badge-booked px-3 py-2">Already Booked</span>
               <a href="{{ url_for('user.bookings') }}" class="btn btn-sm btn-outline-secondary">
                 View Booking
               </a>
             </div>
           {% elif trek.available_slots > 0 %}
             <form method="POST" action="{{ url_for('user.book_trek', trek_id=trek.id) }}">
-              <button class="btn btn-trek w-100 fw-semibold">🥾 Book This Trek</button>
+              <button class="btn btn-trek w-100 fw-semibold"> Book This Trek</button>
             </form>
           {% else %}
             <button class="btn btn-secondary w-100" disabled>Fully Booked</button>
@@ -148,7 +147,7 @@
   {% else %}
   <div class="card">
     <div class="card-body text-center py-5">
-      <div style="font-size:3rem">🔍</div>
+      <div style="font-size:3rem"></div>
       <h5 class="fw-bold mt-3">No Treks Found</h5>
       <p class="text-muted">
         {% if q or diff_filter or loc_filter %}

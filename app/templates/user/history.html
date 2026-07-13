@@ -6,7 +6,7 @@
 
   <div class="section-header">
     <div>
-      <h3 class="fw-bold mb-1">My Trekking History 🗺️</h3>
+      <h3 class="fw-bold mb-1">My Trekking History </h3>
       <p class="text-muted mb-0">A record of all your adventures</p>
     </div>
     <a href="{{ url_for('user.treks') }}" class="btn btn-trek">Find Next Trek</a>
@@ -71,7 +71,7 @@
             </td>
             <td class="small">{{ b.trek.location }}</td>
             <td>
-              <span class="badge badge-{{ b.trek.difficulty|lower }}">{{ b.trek.difficulty }}</span>
+              <span class="badge badge-{{ b.trek.difficulty|lower }} text-dark">{{ b.trek.difficulty }}</span>
             </td>
             <td class="small text-muted">{{ b.trek.duration }}d</td>
             <td class="small text-muted">
@@ -80,7 +80,7 @@
             </td>
             <td class="small text-muted">{{ b.booking_date.strftime('%d %b %Y') }}</td>
             <td>
-              <span class="badge badge-{{ b.status|lower }}">{{ b.status }}</span>
+              <span class="badge badge-{{ b.status|lower }} text-dark">{{ b.status }}</span>
               {% if b.status == 'Completed' %}
               <div><small class="text-success">✓ Done</small></div>
               {% endif %}
@@ -95,7 +95,7 @@
   {% else %}
   <div class="card">
     <div class="card-body text-center py-5">
-      <div style="font-size:3rem">🏔️</div>
+      <div style="font-size:3rem"></div>
       <h5 class="fw-bold mt-3">No History Yet</h5>
       <p class="text-muted mb-3">Your trekking adventures will appear here once you book a trek.</p>
       <a href="{{ url_for('user.treks') }}" class="btn btn-trek">Start Exploring</a>

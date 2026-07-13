@@ -9,13 +9,13 @@
     <div>
       <h3 class="fw-bold mb-1">Staff Dashboard</h3>
       <p class="text-muted mb-0">
-        Welcome, {{ current_user.full_name }} 🗺️
+        Welcome, {{ current_user.full_name }} 
         {% if current_user.staff_profile and current_user.staff_profile.specialization %}
           &mdash; {{ current_user.staff_profile.specialization }} Specialist
         {% endif %}
       </p>
     </div>
-    <span class="badge badge-approved fs-6 px-3 py-2">✅ Approved Staff</span>
+    <span class="badge badge-approved fs-6 px-3 py-2">Approved Staff</span>
   </div>
 
   <!-- Stats -->
@@ -53,16 +53,16 @@
     <div class="card-body">
       <div class="row align-items-center">
         <div class="col-md-8">
-          <h6 class="fw-bold mb-2">👤 My Profile</h6>
+          <h6 class="fw-bold mb-2">My Profile</h6>
           <div class="row g-2 text-muted small">
             {% if sp.specialization %}
             <div class="col-auto">
               <span class="badge bg-info text-dark me-1">{{ sp.specialization }}</span>
             </div>
             {% endif %}
-            <div class="col-auto">🏔️ {{ sp.experience_years or 0 }} yrs experience</div>
+            <div class="col-auto">{{ sp.experience_years or 0 }} yrs experience</div>
             {% if sp.emergency_contact %}
-            <div class="col-auto">🆘 {{ sp.emergency_contact }}</div>
+            <div class="col-auto">{{ sp.emergency_contact }}</div>
             {% endif %}
           </div>
           {% if sp.bio %}
@@ -113,14 +113,14 @@
             </td>
             <td>{{ trek.location }}</td>
             <td>
-              <span class="badge badge-{{ trek.difficulty | lower }}">{{ trek.difficulty }}</span>
+              <span class="badge badge-{{ trek.difficulty | lower }} text-dark">{{ trek.difficulty }}</span>
             </td>
             <td class="small text-muted">
               {{ trek.start_date.strftime('%d %b %Y') }}<br>
               <span class="text-muted">→ {{ trek.end_date.strftime('%d %b %Y') }}</span>
             </td>
             <td>
-              <span class="badge badge-{{ trek.status | lower }}">{{ trek.status }}</span>
+              <span class="badge badge-{{ trek.status | lower }} text-dark">{{ trek.status }}</span>
             </td>
             <td class="text-center">
               <span class="{% if trek.available_slots == 0 %}text-danger fw-semibold{% endif %}">
@@ -147,7 +147,7 @@
   {% else %}
   <div class="card">
     <div class="card-body text-center py-5">
-      <div style="font-size:3rem">🏔️</div>
+      <div style="font-size:3rem"></div>
       <h5 class="fw-bold mt-3">No Treks Assigned Yet</h5>
       <p class="text-muted">The Admin will assign treks to you. Check back soon!</p>
     </div>

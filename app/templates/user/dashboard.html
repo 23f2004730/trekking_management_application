@@ -6,7 +6,7 @@
 
   <div class="section-header">
     <div>
-      <h3 class="fw-bold mb-1">Welcome, {{ current_user.full_name }}! 🥾</h3>
+      <h3 class="fw-bold mb-1">Welcome, {{ current_user.full_name }}! </h3>
       <p class="text-muted mb-0">Discover and book your next adventure</p>
     </div>
     <a href="{{ url_for('user.treks') }}" class="btn btn-trek">Browse Treks</a>
@@ -53,7 +53,7 @@
     <div class="col-lg-7">
       <div class="card h-100">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <span>🏔️ Open Treks — Book Now</span>
+          <span>Open Treks — Book Now</span>
           <a href="{{ url_for('user.treks') }}" class="btn btn-trek btn-sm">View All</a>
         </div>
         {% if open_treks %}
@@ -67,21 +67,21 @@
               <tr>
                 <td>
                   <div class="fw-semibold">{{ trek.name }}</div>
-                  <small class="text-muted">📍{{ trek.location }} · {{ trek.duration }}d</small>
+                  <small class="text-muted">{{ trek.location }} · {{ trek.duration }}d</small>
                 </td>
-                <td><span class="badge badge-{{ trek.difficulty|lower }}">{{ trek.difficulty }}</span></td>
+                <td><span class="badge badge-{{ trek.difficulty|lower }} text-dark">{{ trek.difficulty }}</span></td>
                 <td class="{% if trek.available_slots==0 %}text-danger{% endif %}">
                   {{ trek.available_slots }}/{{ trek.total_slots }}
                 </td>
                 <td>
                   {% if trek.id in booked_ids %}
-                    <span class="badge badge-booked">Booked</span>
+                    <span class="badge badge-booked text-dark">Booked</span>
                   {% elif trek.available_slots > 0 %}
                     <form method="POST" action="{{ url_for('user.book_trek', trek_id=trek.id) }}">
                       <button class="btn btn-trek btn-sm">Book</button>
                     </form>
                   {% else %}
-                    <span class="badge bg-secondary">Full</span>
+                    <span class="badge bg-secondary text-dark">Full</span>
                   {% endif %}
                 </td>
               </tr>
@@ -91,7 +91,7 @@
         </div>
         {% else %}
         <div class="card-body text-center py-4">
-          <div style="font-size:2rem">🏕️</div>
+          <div style="font-size:2rem"></div>
           <p class="text-muted mb-0 mt-2">No open treks available right now.</p>
         </div>
         {% endif %}
@@ -102,7 +102,7 @@
     <div class="col-lg-5">
       <div class="card h-100">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <span>📋 My Recent Bookings</span>
+          <span>My Recent Bookings</span>
           <a href="{{ url_for('user.bookings') }}" class="btn btn-sm btn-outline-secondary">All</a>
         </div>
         {% if my_bookings %}
@@ -117,14 +117,14 @@
                   {{ b.trek.start_date.strftime('%d %b') }}–{{ b.trek.end_date.strftime('%d %b %Y') }}
                 </div>
               </div>
-              <span class="badge badge-{{ b.status|lower }}">{{ b.status }}</span>
+              <span class="badge badge-{{ b.status|lower }} text-dark">{{ b.status }}</span>
             </div>
           </div>
           {% endfor %}
         </div>
         {% else %}
         <div class="card-body text-center py-4">
-          <div style="font-size:2rem">🎒</div>
+          <div style="font-size:2rem"></div>
           <p class="text-muted mt-2 mb-0 small">No bookings yet.</p>
           <a href="{{ url_for('user.treks') }}" class="btn btn-trek btn-sm mt-2">Find a Trek</a>
         </div>

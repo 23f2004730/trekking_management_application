@@ -9,9 +9,9 @@
       <!-- Header -->
       <div class="card-header text-white text-center py-4"
            style="background-color: var(--trek-dark); border-radius: 12px 12px 0 0;">
-        <div class="auth-logo mb-2">🧗</div>
-        <h4 class="mb-0 text-white">Create Your Account</h4>
-        <small class="text-white-50">Join as a Trekker or Trek Staff</small>
+        <div class="auth-logo mb-2"></div>
+        <h4 class="mb-0 text-black">Create Your Account</h4>
+        <small class="text-black-50">Join as a Trekker or Trek Staff</small>
       </div>
 
       <div class="card-body p-4">
@@ -27,7 +27,7 @@
                        {% if form_data.get('role', 'trekker') == 'trekker' %}checked{% endif %}
                        required>
                 <label class="form-check-label fw-semibold" for="role_trekker">
-                  🥾 Trekker
+                  Trekker
                 </label>
                 <div class="text-muted small">Browse and book treks</div>
               </div>
@@ -36,7 +36,7 @@
                        id="role_staff" value="staff"
                        {% if form_data.get('role') == 'staff' %}checked{% endif %}>
                 <label class="form-check-label fw-semibold" for="role_staff">
-                  🗺️ Trek Staff
+                  Trek Staff
                 </label>
                 <div class="text-muted small">Guide and manage treks</div>
               </div>
@@ -109,7 +109,7 @@
           <!-- ── Trek Staff section ──────────────────────────────────── -->
           <div class="staff-section">
             <div class="staff-section-title">
-              🗺️ Trek Staff Details
+              Trek Staff Details
               <span class="text-muted fw-normal text-lowercase ms-1">(fill this only if registering as Trek Staff)</span>
             </div>
 
