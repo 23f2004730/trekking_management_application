@@ -1,9 +1,3 @@
-/* =============================================================================
-   style.css — TrekManager Custom Styles
-   Bootstrap 5 handles the base; this file adds the trek theme on top.
-   ============================================================================= */
-
-/* ── Design tokens ─────────────────────────────────────────────────────────── */
 :root {
     --trek-dark   : #1a3d2b;   /* deep forest green — navbar */
     --trek-medium : #2d6a4f;   /* mid green */
